@@ -5,9 +5,9 @@ on:
     inputs:
       tag:
         description: "The tag version you want to build"
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
 
 jobs:
   build:
