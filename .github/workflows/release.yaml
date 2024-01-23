@@ -5,9 +5,9 @@ on:
     inputs:
       tag:
         description: "The tag version you want to build"
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -30,7 +30,6 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          body_path: ./RELEASE.md
           name: ${{ github.event.inputs.tag }}
           files: |
             1080pimages.zip
@@ -45,11 +44,16 @@ jobs:
           cd ../
           rm -rf bing
           unzip bing.zip
+          cd bing
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          git init
+          git remote add origin https://github.com/x-dr/bing_new.git
           git add .
-          git commit -m "⌚️$(date +%Y%m%d%H%M%S)" -a          
-      - name: Push changes
+          git commit -m "⌚️$(date +%Y%m%d%H%M%S)" -a 
+          git branch -M main
+          git push -u origin main 
+       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
