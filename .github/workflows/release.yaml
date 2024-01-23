@@ -1,0 +1,57 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "The tag version you want to build"
+  # push:
+  #   branches:
+  #     - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.1.1
+
+      - name: Get zip 
+        run: |
+          wget https://github.com/x-dr/bing/releases/download/20240124/1080pimages.zip
+          wget https://github.com/x-dr/bing/releases/download/20240124/2022_images.zip
+          wget https://github.com/x-dr/bing/releases/download/20240124/2023-2024_images.zip
+          wget https://github.com/x-dr/bing/releases/download/20240124/bing.zip
+          wget https://github.com/x-dr/bing/releases/download/20240124/json.zip
+          
+
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: ./RELEASE.md
+          name: ${{ github.event.inputs.tag }}
+          files: |
+            1080pimages.zip
+            2022_images.zip
+            2023-2024_images.zip
+            bing.zip
+            json.zip  
+          tag_name: ${{ github.event.inputs.tag }}
+      - name: Get zip 
+        run: |
+          cp bing.zip ../
+          cd ../
+          rm -rf bing
+          unzip bing.zip
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "⌚️$(date +%Y%m%d%H%M%S)" -a          
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+          force: true
